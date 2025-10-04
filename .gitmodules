@@ -1,0 +1,3 @@
+[submodule "roles/ansible-role-k8s-install-3k"]
+	path = roles/ansible-role-k8s-install-3k
+	url = https://github.com/rabinauget/ansible-role-k8s-install-3k

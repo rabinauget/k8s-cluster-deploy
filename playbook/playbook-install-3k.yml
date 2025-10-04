@@ -1,0 +1,7 @@
+---
+- name: Install 3k
+  hosts: vbox
+  gather_facts: true
+  become: true
+  roles:
+    - ansible-role-k8s-install-3k

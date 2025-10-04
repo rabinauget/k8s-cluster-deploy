@@ -1,0 +1,35 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/bookworm64"
+  
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = 1
+  end
+
+  machines = [
+    { name: "controlplane", ip: "10.0.2.15", host_port: 2222 },
+    { name: "worker1", ip: "10.0.2.16", host_port: 2223 },
+    { name: "worker2", ip: "10.0.2.17", host_port: 2224 },
+    { name: "worker3", ip: "10.0.2.18", host_port: 2225 }
+  ]
+
+  machines.each do |machine|
+    config.vm.define machine[:name] do |node|
+      node.vm.hostname = machine[:name]
+      node.vm.network "private_network",
+        ip: machine[:ip],
+        netmask: "255.255.255.0",
+        virtualbox__intnet: "NatNetwork"
+      node.vm.network "forwarded_port", 
+        guest: 22,
+        host: machine[:host_port]
+      node.vm.provision "file", source: "/home/auget/.ssh/id_rsa.pub", destination: "/tmp/id_rsa.pub"
+      node.vm.provision "file", source: "./auget_user_creation_script.sh", destination: "/tmp/auget_user_creation_script.sh"
+      node.vm.provision "shell", inline: <<-SHELL
+        sudo chmod +x /tmp/auget_user_creation_script.sh
+        sudo bash /tmp/auget_user_creation_script.sh
+        sudo apt update
+      SHELL
+    end
+  end
+end
