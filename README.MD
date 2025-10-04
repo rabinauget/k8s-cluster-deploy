@@ -5,8 +5,8 @@ Ce projet permet de déployer un cluster Kubernetes multi-nœuds en utilisant Va
 
 **Architecture du Cluster**
 
-- 1 nœud control-plane : controlplane (192.168.56.15)
-- 3 nœuds workers : worker1, worker2, worker3 (192.168.56.16-18)
+- 1 nœud control-plane : ```controlplane``` (192.168.56.15)
+- 3 nœuds workers : ```worker1```, ```worker2```, ```worker3``` (192.168.56.16-18)
 
 **Prérequis**
 
@@ -15,7 +15,7 @@ Logiciels requis
 - Vagrant 2.3+
 - VirtualBox 7.1+
 - Ansible 2.12+
-- SSH keys (~/.ssh/id_rsa et ~/.ssh/id_rsa.pub)
+- SSH keys (```~/.ssh/id_rsa``` et ```~/.ssh/id_rsa.pub```)
 
 Vérification de l'installation
 
@@ -29,50 +29,51 @@ ansible --version
 
 ```
 .
-├── Vagrantfile                 # Configuration des VMs
-├── ansible.cfg                # Configuration Ansible
+├── vagrant/
+│   └── Vagranntfile                            # Configuration des VMs
+├── ansible.cfg                                 # Configuration Ansible
 ├── inventory/
-│   └── hosts.yml              # Inventaire des hôtes
+│   ├── hosts.yml                               # Inventaire des hôtes
 ├── group_vars/
-│   └── vbox.yml               # Variables pour les VMs
+│   └── vbox.yml                                # Variables pour les VMs
 ├── playbook/
-│   ├── playbook-install-3k.yml    # Installation Kubernetes
-│   ├── playbook-master-setup.yml  # Initialisation control-plane
-│   └── playbook-workers-join.yml  # Jointure des workers
+│   ├── playbook-k8s-3k-install.yml             # Installation composants kubernetes
+│   ├── playbook-k8s-cluster-initialise.yml     # Initialisation control-plane
+│   └── playbook-k8s-cluster-join.yml           # Jointure des workers
 └── roles/
     └── ansible-role-k8s-install-3k/
-        ├── defaults/main.yml      # Variables par défaut
-        ├── vars/main.yml          # Variables fixes
-        ├── tasks/main.yml         # Tâches d'installation
-        └── handlers/main.yml      # Handlers systemd
+        ├── defaults/main.yml                   # Variables par défaut
+        ├── vars/main.yml                       # Variables fixes
+        ├── tasks/main.yml                      # Tâches d'installation
+        └── handlers/main.yml                   # Handlers systemd
 ```
 
 **Déploiement**
 
-Étape 1 : Déployer l'infrastructure virtuelle
+Étape 1 : Déployer l'infrastructure virtuelle : il faut se déplacer dans le répertoire vagrant : 
 
 ```
 cd vagrant
 vagrant up
 ```
 
-Étape 2 : Installer Kubernetes sur tous les nœuds
+Étape 2 : Installer Kubernetes sur tous les nœuds : se mettre à la racine :
 
 ```
 cd ..
-ansible-playbook -i inventory/hosts.yml playbook/playbook-install-3k.yml
+ansible-playbook -i inventory/hosts.yml playbook/playbook-k8s-3k-install.yml 
 ```
 
 Étape 3 : Initialiser le cluster sur le control-plane
 
 ```
-ansible-playbook -i inventory/hosts.yml playbook/playbook-master-setup.yml
+ansible-playbook -i inventory/hosts.yml playbook/playbook-k8s-cluster-initialise.yml 
 ```
 
 Étape 4 : Joindre les workers au cluster
 
 ```
-ansible-playbook -i inventory/hosts.yml playbook/playbook-workers-join.yml
+ansible-playbook -i inventory/hosts.yml playbook/playbook-k8s-cluster-join.yml
 ```
 
 **Configuration**
@@ -160,10 +161,11 @@ ansible -i inventory/hosts.yml all -a "sudo systemctl restart containerd" --beco
 
 **Variables personnalisables**
 
-Modifiez roles/ansible-role-k8s-install-3k/defaults/main.yml pour changer :
+Modifiez ```roles/playbook-k8s-3k-install.yml/defaults/main.yml``` pour changer :
 - Versions de Kubernetes
 - Versions de Containerd
-- Plages IP des réseaux
+- Versions de runc
+- Versions de CNI
 
 **Sécurité**
 
@@ -174,6 +176,6 @@ Modifiez roles/ansible-role-k8s-install-3k/defaults/main.yml pour changer :
 **Support**
 
 1. En cas de problème, vérifiez :
-2. Les logs Ansible avec -vvv
-3. Les logs systemd : journalctl -u kubelet
-4. L'état des pods : kubectl describe pod <pod-name>
+2. Les logs Ansible avec ```-vvv```
+3. Les logs systemd : ```journalctl -u kubelet```
+4. L'état des pods : ```kubectl describe pod <pod-name>```
