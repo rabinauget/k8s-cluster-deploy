@@ -105,7 +105,7 @@ Commandes utiles
 kubectl get nodes -o wide
 kubectl get pods -A
 
-# Vérifier les services système
+# Vérifier les services systèmes
 kubectl get pods -n kube-system
 
 # Informations sur le cluster
