@@ -1,4 +1,4 @@
-<strong>tDeploiement de cluster kubernetes automatisé via ansible</strong>
+<strong>Deploiement de cluster kubernetes automatisé via ansible</strong>
 =========
 
 Ce projet permet de déployer un cluster Kubernetes multi-nœuds en utilisant Vagrant pour l'infrastructure virtuelle et Ansible pour l'automatisation.
