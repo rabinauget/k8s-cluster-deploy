@@ -64,7 +64,7 @@ cd ..
 ansible-playbook -i inventory/hosts.yml playbook/playbook-k8s-3k-install.yml 
 ```
 
-Étape 3 : Initialiser le cluster sur le control-plane
+Étape 3 : Initialiser le cluster sur le controlplane
 
 ```
 ansible-playbook -i inventory/hosts.yml playbook/playbook-k8s-cluster-initialise.yml 
