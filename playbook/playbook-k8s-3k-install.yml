@@ -1,6 +1,6 @@
 ---
 - name: Install 3k
-  hosts: vbox
+  hosts: controlplane
   gather_facts: true
   become: true
   roles:
