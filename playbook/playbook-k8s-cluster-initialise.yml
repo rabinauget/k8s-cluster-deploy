@@ -4,7 +4,7 @@
   become: yes
   tasks:
     - name: Initialize the Kubernetes cluster using kubeadm
-      command: kubeadm init --apiserver-advertise-address=192.168.56.15 --pod-network-cidr=10.244.0.0/16
+      command: kubeadm init --control-plane-endpoint="192.168.56.15:6443" --apiserver-advertise-address=192.168.56.15 --pod-network-cidr=10.244.0.0/16
       args:
         creates: /etc/kubernetes/admin.conf
       register: kubeadm_init
